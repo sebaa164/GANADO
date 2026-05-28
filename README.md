@@ -65,7 +65,10 @@ composer install
 cp .env.example .env
 php artisan key:generate
 php artisan migrate
+php artisan serve --port=8000
 ```
+
+> El servidor de desarrollo corre en **http://localhost:8000**
 
 ### Microservicio IA (FastAPI)
 
