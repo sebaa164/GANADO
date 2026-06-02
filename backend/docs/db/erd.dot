@@ -1,0 +1,32 @@
+digraph ERD {
+  graph [rankdir=LR, splines=ortho, nodesep=0.7, ranksep=1.1, bgcolor="white"];
+  node [shape=record, fontname="Arial", fontsize=10];
+  edge [fontname="Arial", fontsize=9, arrowsize=0.8];
+
+  empresas [label="{empresas|PK id\lnombre\lcuit\l}"];
+  usuarios [label="{usuarios|PK id\lFK empresa_id\lnombre\lemail UNIQUE\l}"];
+  roles [label="{roles|PK id\lnombre UNIQUE\l}"];
+  permisos [label="{permisos|PK id\lcodigo UNIQUE\l}"];
+  usuario_rol [label="{usuario_rol|PK/FK usuario_id\lPK/FK rol_id\l}"];
+  rol_permiso [label="{rol_permiso|PK/FK rol_id\lPK/FK permiso_id\l}"];
+  establecimientos [label="{establecimientos|PK id\lFK empresa_id\lnombre\llatitud\llongitud\l}"];
+  corrales [label="{corrales|PK id\lFK establecimiento_id\lcodigo\lcapacidad\l}"];
+  lotes [label="{lotes|PK id\lFK corral_id\lnombre\lcategoria\l}"];
+  animales [label="{animales|PK id\lFK lote_id\lrfid UNIQUE\lnumero_caravana\lestado\l}"];
+  pesajes [label="{pesajes|PK id\lFK animal_id\lpeso_estimado\lmetodo\l}"];
+  alertas [label="{alertas|PK id\lFK animal_id\lFK corral_id\ltipo\lseveridad\l}"];
+  auditoria_logs [label="{auditoria_logs|PK id\lusuario_id\laccion\lentidad\ldatos JSONB\l}"];
+
+  empresas -> establecimientos [label="1:N"];
+  empresas -> usuarios [label="1:N"];
+  usuarios -> usuario_rol [label="1:N"];
+  roles -> usuario_rol [label="1:N"];
+  roles -> rol_permiso [label="1:N"];
+  permisos -> rol_permiso [label="1:N"];
+  establecimientos -> corrales [label="1:N"];
+  corrales -> lotes [label="1:N"];
+  lotes -> animales [label="1:N"];
+  animales -> pesajes [label="1:N"];
+  animales -> alertas [label="1:N"];
+  corrales -> alertas [label="1:N"];
+}

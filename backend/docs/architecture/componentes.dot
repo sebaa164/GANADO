@@ -1,0 +1,15 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white"];
+  node [shape=box, style="rounded", fontname="Arial"];
+  Frontend -> APIGateway [label="REST"];
+  APIGateway -> PostgreSQL;
+  APIGateway -> Redis;
+  APIGateway -> Trazabilidad;
+  APIGateway -> RFID;
+  APIGateway -> Camaras;
+  APIGateway -> IA;
+  APIGateway -> Alertas;
+  RFID -> Redis [label="eventos fase 0"];
+  Camaras -> IA [label="frames"];
+  IA -> Alertas [label="weight.estimated"];
+}
