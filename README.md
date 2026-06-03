@@ -18,11 +18,13 @@ El proyecto está organizado como un monorepo con múltiples servicios:
 
 ```
 sistema-vacas/
-├── app/                        # Laravel — API principal (backend)
+├── app/                        # Laravel — API principal (backend PHP)
+├── backend/                    # FastAPI — Backend Python (fase 0, dominios, API gateway)
+├── src/                        # Next.js — Frontend (GanadoVision UI)
 ├── services/
 │   └── ai-service/             # FastAPI — Microservicio de IA y procesamiento de imágenes
 ├── database/                   # Migraciones y seeders (PostgreSQL)
-├── routes/                     # Rutas de la API REST
+├── routes/                     # Rutas de la API REST Laravel
 └── ...
 ```
 
@@ -31,6 +33,8 @@ sistema-vacas/
 | Servicio | Tecnología | Responsabilidad |
 |---|---|---|
 | API Principal | Laravel 10 + PostgreSQL | Lógica de negocio, trazabilidad, alertas, usuarios |
+| Backend Python | FastAPI + SQLAlchemy | API Gateway, dominios (ganado, cámaras, auth), ingesta RTSP |
+| Frontend | Next.js + React + Tailwind | Interfaz de usuario, dashboard, alertas, diseño GanadoVision |
 | Servicio de IA | FastAPI + Python | Procesamiento de imágenes, detección YOLO, clasificación de estados |
 
 ---
@@ -38,7 +42,8 @@ sistema-vacas/
 ## Stack Tecnológico
 
 - **Backend principal:** PHP 8.1 / Laravel 10
-- **Microservicio IA:** Python / FastAPI
+- **Backend Python:** Python / FastAPI / SQLAlchemy / Alembic
+- **Frontend:** Next.js 16 / React 19 / TypeScript / Tailwind CSS / Zustand / React Query
 - **Base de datos:** PostgreSQL
 - **Autenticación:** Laravel Sanctum
 - **Visión artificial:** YOLO (via Python)
@@ -52,7 +57,7 @@ sistema-vacas/
 - Composer
 - Python >= 3.10
 - PostgreSQL
-- Node.js (para assets frontend)
+- Node.js >= 18 (para frontend Next.js)
 
 ---
 
@@ -70,6 +75,24 @@ php artisan serve --port=8000
 
 > El servidor de desarrollo corre en **http://localhost:8000**
 
+### Backend Python (FastAPI)
+
+```bash
+cd backend
+cp .env.example .env
+pip install -e .
+uvicorn api_gateway.main:app --reload --port=8001
+```
+
+### Frontend (Next.js — GanadoVision)
+
+```bash
+npm install
+npm run dev
+```
+
+> El frontend corre en **http://localhost:3000**
+
 ### Microservicio IA (FastAPI)
 
 ```bash
@@ -86,5 +109,7 @@ uvicorn main:app --reload
 ## Variables de entorno
 
 Copiá `.env.example` a `.env` en la raíz del proyecto y completá los valores de conexión a PostgreSQL y las claves necesarias.
+
+Para el backend Python, hacé lo mismo dentro de `backend/`.
 
 Para el microservicio de IA, hacé lo mismo dentro de `services/ai-service/`.
