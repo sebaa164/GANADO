@@ -11,6 +11,8 @@ class Animal extends Model
 {
     use HasFactory;
 
+    protected $table = 'animales';
+
     protected $fillable = [
         'corral_id',
         'codigo_caravana',

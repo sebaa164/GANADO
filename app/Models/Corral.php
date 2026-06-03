@@ -10,9 +10,9 @@ class Corral extends Model
 {
     use HasFactory;
 
+    protected $table = 'corrales';
+
     protected $fillable = [
-        'nombre',
-        'codigo',
         'capacidad_maxima',
         'descripcion',
         'activo',

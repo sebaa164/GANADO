@@ -1,51 +1,89 @@
-<x-layouts.app title="Animales — GanadoVision">
-    <div class="space-y-4">
-        <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-gray-900">Animales</h1>
-            <a href="{{ route('animales.create') }}"
-               class="px-4 py-2 bg-green-dark text-white rounded-lg text-sm font-medium hover:bg-green-base transition-colors">
-                + Registrar animal
-            </a>
-        </div>
+@extends('layouts.app')
+@section('title', 'Animales — GanadoVision')
 
-        <div class="bg-white rounded-lg border border-gray-100 shadow-soft overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Caravana</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Raza</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sexo</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Corral</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                        <th class="px-4 py-3"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($animales as $animal)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $animal->codigo_caravana }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $animal->raza ?? '—' }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($animal->sexo) }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $animal->corral->nombre ?? '—' }}</td>
-                        <td class="px-4 py-3">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $animal->activo ? 'bg-green-100 text-green-dark' : 'bg-gray-100 text-gray-500' }}">
-                                {{ $animal->activo ? 'Activo' : 'Inactivo' }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <a href="{{ route('animales.show', $animal) }}" class="text-sm text-green-dark hover:underline">Ver</a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">No hay animales registrados.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            <div class="px-4 py-3 border-t border-gray-100">
-                {{ $animales->links() }}
-            </div>
-        </div>
-    </div>
-</x-layouts.app>
+@section('content')
+<style>
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-title  { font-size:22px; font-weight:700; color:#111827; }
+    .btn-primary {
+        display:inline-flex; align-items:center; gap:6px;
+        padding:9px 18px; border-radius:10px;
+        background:#2D6A2D; color:#fff;
+        font-size:13px; font-weight:600;
+        text-decoration:none; border:none; cursor:pointer;
+        font-family:'Inter',sans-serif;
+        transition:background .15s, transform .1s;
+    }
+    .btn-primary:hover { background:#246024; transform:translateY(-1px); }
+    .btn-primary svg { width:15px; height:15px; stroke:white; fill:none; }
+
+    .data-card {
+        background:#fff; border:1px solid #e5e7eb;
+        border-radius:16px; box-shadow:0 1px 4px rgba(0,0,0,.05);
+        overflow:hidden;
+    }
+    table { width:100%; border-collapse:collapse; }
+    thead { background:#f9fafb; }
+    th {
+        padding:12px 16px; text-align:left;
+        font-size:11px; font-weight:600;
+        text-transform:uppercase; letter-spacing:.06em;
+        color:#9ca3af; white-space:nowrap;
+    }
+    td { padding:13px 16px; font-size:14px; color:#374151; border-top:1px solid #f3f4f6; }
+    tr:hover td { background:#fafafa; }
+    .badge {
+        display:inline-flex; align-items:center;
+        padding:3px 9px; border-radius:999px;
+        font-size:11px; font-weight:600;
+    }
+    .link-action { font-size:13px; color:#2D6A2D; text-decoration:none; font-weight:500; }
+    .link-action:hover { text-decoration:underline; }
+    .table-footer { padding:14px 16px; border-top:1px solid #f3f4f6; }
+    .empty-row td { text-align:center; padding:48px; color:#9ca3af; }
+</style>
+
+<div class="page-header">
+    <div class="page-title">Animales</div>
+    <a href="{{ route('animales.create') }}" class="btn-primary">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        Registrar animal
+    </a>
+</div>
+
+<div class="data-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Caravana</th>
+                <th>Raza</th>
+                <th>Sexo</th>
+                <th>Corral</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($animales as $animal)
+            <tr>
+                <td><strong style="color:#111827">{{ $animal->codigo_caravana }}</strong></td>
+                <td>{{ $animal->raza ?? '—' }}</td>
+                <td>{{ ucfirst($animal->sexo) }}</td>
+                <td>{{ $animal->corral->nombre ?? '—' }}</td>
+                <td>
+                    <span class="badge" style="{{ $animal->activo ? 'background:#f0fdf4;color:#2D6A2D' : 'background:#f3f4f6;color:#6b7280' }}">
+                        {{ $animal->activo ? 'Activo' : 'Inactivo' }}
+                    </span>
+                </td>
+                <td style="text-align:right">
+                    <a href="{{ route('animales.show', $animal) }}" class="link-action">Ver →</a>
+                </td>
+            </tr>
+            @empty
+            <tr class="empty-row"><td colspan="6">No hay animales registrados.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+    <div class="table-footer">{{ $animales->links() }}</div>
+</div>
+@endsection

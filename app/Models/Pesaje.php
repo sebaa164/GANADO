@@ -10,9 +10,9 @@ class Pesaje extends Model
 {
     use HasFactory;
 
+    protected $table = 'pesajes';
+
     protected $fillable = [
-        'animal_id',
-        'registrado_por',
         'peso_kg',
         'tipo',
         'pesado_en',

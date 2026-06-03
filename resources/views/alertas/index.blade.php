@@ -1,58 +1,75 @@
-<x-layouts.app title="Alertas — GanadoVision">
-    <div class="space-y-4">
-        <h1 class="text-2xl font-bold text-gray-900">Alertas</h1>
+@extends('layouts.app')
+@section('title', 'Alertas — GanadoVision')
 
-        <div class="bg-white rounded-lg border border-gray-100 shadow-soft overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Animal</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Corral</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prioridad</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Generada</th>
-                        <th class="px-4 py-3"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($alertas as $alerta)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $alerta->tipo_anomalia }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $alerta->animal->codigo_caravana ?? '—' }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $alerta->corral->nombre ?? '—' }}</td>
-                        <td class="px-4 py-3">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
-                                {{ $alerta->prioridad === 'alta' ? 'bg-red-100 text-primary' : 'bg-yellow-100 text-yellow-800' }}">
-                                {{ ucfirst($alerta->prioridad) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
-                                {{ $alerta->estado === 'pendiente' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-dark' }}">
-                                {{ ucfirst($alerta->estado) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-500">{{ $alerta->generada_en?->diffForHumans() }}</td>
-                        <td class="px-4 py-3 text-right">
-                            @if($alerta->estado === 'pendiente')
-                            <form method="POST" action="{{ route('alertas.update', $alerta) }}" class="inline">
-                                @csrf @method('PUT')
-                                <button type="submit" class="text-sm text-green-dark hover:underline">Resolver</button>
-                            </form>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">No hay alertas pendientes.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            <div class="px-4 py-3 border-t border-gray-100">
-                {{ $alertas->links() }}
-            </div>
-        </div>
-    </div>
-</x-layouts.app>
+@section('content')
+<style>
+    .page-title { font-size:22px; font-weight:700; color:#111827; margin-bottom:24px; }
+    .data-card  { background:#fff; border:1px solid #e5e7eb; border-radius:16px; box-shadow:0 1px 4px rgba(0,0,0,.05); overflow:hidden; }
+    table { width:100%; border-collapse:collapse; }
+    thead { background:#f9fafb; }
+    th { padding:12px 16px; text-align:left; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:#9ca3af; white-space:nowrap; }
+    td { padding:13px 16px; font-size:14px; color:#374151; border-top:1px solid #f3f4f6; }
+    tr:hover td { background:#fafafa; }
+    .badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; }
+    .btn-resolve {
+        padding:5px 12px; border-radius:8px;
+        background:#f0fdf4; color:#2D6A2D;
+        border:1px solid #bbf7d0;
+        font-size:12px; font-weight:600;
+        cursor:pointer; font-family:'Inter',sans-serif;
+        transition:background .1s;
+    }
+    .btn-resolve:hover { background:#dcfce7; }
+    .table-footer { padding:14px 16px; border-top:1px solid #f3f4f6; }
+    .empty-row td { text-align:center; padding:48px; color:#9ca3af; }
+</style>
+
+<div class="page-title">Alertas</div>
+
+<div class="data-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Animal</th>
+                <th>Corral</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Generada</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($alertas as $alerta)
+            <tr>
+                <td><strong style="color:#111827">{{ $alerta->tipo_anomalia }}</strong></td>
+                <td>{{ $alerta->animal->codigo_caravana ?? '—' }}</td>
+                <td>{{ $alerta->corral->nombre ?? '—' }}</td>
+                <td>
+                    <span class="badge" style="{{ $alerta->prioridad === 'alta' ? 'background:#fff1f0;color:#C94A3F' : 'background:#fffbeb;color:#d97706' }}">
+                        {{ ucfirst($alerta->prioridad) }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge" style="{{ $alerta->estado === 'pendiente' ? 'background:#fff7ed;color:#ea580c' : 'background:#f0fdf4;color:#2D6A2D' }}">
+                        {{ ucfirst($alerta->estado) }}
+                    </span>
+                </td>
+                <td style="color:#9ca3af; font-size:12px">{{ $alerta->generada_en?->diffForHumans() }}</td>
+                <td style="text-align:right">
+                    @if($alerta->estado === 'pendiente')
+                    <form method="POST" action="{{ route('alertas.update', $alerta) }}" style="display:inline">
+                        @csrf @method('PUT')
+                        <button type="submit" class="btn-resolve">Resolver</button>
+                    </form>
+                    @endif
+                </td>
+            </tr>
+            @empty
+            <tr class="empty-row"><td colspan="7">No hay alertas pendientes.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+    <div class="table-footer">{{ $alertas->links() }}</div>
+</div>
+@endsection

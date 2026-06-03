@@ -4,158 +4,391 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'GanadoVision' }}</title>
+    <title>@yield('title', 'GanadoVision')</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f6fa;
+            color: #111827;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 64px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .navbar-left  { display: flex; align-items: center; gap: 12px; }
+        .navbar-right { display: flex; align-items: center; gap: 12px; }
+
+        .nav-menu-btn {
+            display: none;
+            align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            border: none;
+            background: #f3f4f6;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .nav-menu-btn:hover { background: #e5e7eb; }
+        .nav-menu-btn svg  { width: 18px; height: 18px; stroke: currentColor; }
+        @media (max-width: 1023px) { .nav-menu-btn { display: flex; } }
+
+        .nav-brand {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none;
+        }
+        .nav-brand-icon {
+            width: 34px; height: 34px;
+            border-radius: 9px;
+            background: #2D6A2D;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .nav-brand-icon svg { width: 18px; height: 18px; stroke: white; fill: none; }
+        .nav-brand-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.3px;
+        }
+
+        /* Usuario dropdown */
+        .user-btn {
+            display: flex; align-items: center; gap: 10px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            cursor: pointer;
+            transition: background .15s, border-color .15s;
+        }
+        .user-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+        .user-info { text-align: right; }
+        .user-name  { font-size: 13px; font-weight: 600; color: #111827; line-height: 1.3; }
+        .user-role  { font-size: 11px; color: #2D6A2D; font-weight: 500; }
+        .user-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: #2D6A2D;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 220px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            overflow: hidden;
+            z-index: 200;
+        }
+        .dropdown-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            background: #f9fafb;
+        }
+        .dropdown-header .dn { font-size: 13px; font-weight: 600; color: #111; }
+        .dropdown-header .dr { font-size: 11px; color: #2D6A2D; margin-top: 2px; }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 16px;
+            font-size: 13px;
+            color: #374151;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            transition: background .1s;
+        }
+        .dropdown-item:hover { background: #f9fafb; }
+        .dropdown-item.danger { color: #dc2626; }
+        .dropdown-item svg { width: 15px; height: 15px; stroke: currentColor; flex-shrink: 0; }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            position: fixed;
+            top: 64px; left: 0; bottom: 0;
+            width: 240px;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            z-index: 90;
+            transition: transform .25s ease, width .25s ease;
+            overflow-y: auto;
+        }
+        .sidebar.collapsed { width: 64px; }
+        @media (max-width: 1023px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar.collapsed { width: 240px; }
+        }
+
+        .sidebar-nav { padding: 16px 10px; flex: 1; }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3af;
+            padding: 8px 10px 4px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .sidebar.collapsed .nav-section-label { opacity: 0; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background .12s, color .12s;
+            white-space: nowrap;
+            overflow: hidden;
+            margin-bottom: 2px;
+        }
+        .nav-item:hover { background: #f3f4f6; color: #111827; }
+        .nav-item.active {
+            background: #eef6ee;
+            color: #2D6A2D;
+            font-weight: 600;
+        }
+        .nav-item svg {
+            width: 18px; height: 18px;
+            stroke: currentColor;
+            fill: none;
+            flex-shrink: 0;
+        }
+        .nav-item span { overflow: hidden; }
+        .sidebar.collapsed .nav-item span { display: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 10px; }
+
+        /* Botón colapsar */
+        .sidebar-collapse-btn {
+            margin: 8px 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            cursor: pointer;
+            font-size: 13px;
+            color: #6b7280;
+            font-family: 'Inter', sans-serif;
+            transition: background .12s;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .sidebar-collapse-btn:hover { background: #f3f4f6; color: #374151; }
+        .sidebar-collapse-btn svg { width: 15px; height: 15px; stroke: currentColor; flex-shrink: 0; transition: transform .25s; }
+        .sidebar.collapsed .sidebar-collapse-btn svg { transform: rotate(180deg); }
+        .sidebar.collapsed .sidebar-collapse-btn span { display: none; }
+        .sidebar.collapsed .sidebar-collapse-btn { justify-content: center; padding: 9px; }
+        @media (max-width: 1023px) { .sidebar-collapse-btn { display: none; } }
+
+        /* Overlay móvil */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 80;
+        }
+        .sidebar-overlay.visible { display: block; }
+
+        /* ── CONTENIDO PRINCIPAL ── */
+        .main-content {
+            margin-top: 64px;
+            margin-left: 240px;
+            padding: 28px 28px;
+            min-height: calc(100vh - 64px);
+            transition: margin-left .25s ease;
+        }
+        .main-content.collapsed { margin-left: 64px; }
+        @media (max-width: 1023px) { .main-content { margin-left: 0; } }
+
+        /* ── FLASH MESSAGES ── */
+        .flash-success {
+            display: flex; align-items: center; gap: 10px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #166534;
+        }
+        .flash-error {
+            display: flex; align-items: center; gap: 10px;
+            background: #fff1f0;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #991b1b;
+        }
+        .flash-success svg, .flash-error svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+    </style>
 </head>
-<body class="bg-gray-50 antialiased" x-data="{ sidebarOpen: false, sidebarCollapsed: false, userMenuOpen: false }">
+<body x-data="{
+    sidebarOpen: false,
+    sidebarCollapsed: false,
+    userMenuOpen: false
+}">
 
-    {{-- NAVBAR --}}
-    <nav class="bg-white border-b border-gray-200 fixed w-full z-30 top-0">
-        <div class="px-3 py-3 lg:px-5 lg:pl-3">
-            <div class="flex items-center justify-between">
+{{-- Overlay móvil --}}
+<div :class="sidebarOpen ? 'visible' : ''"
+     class="sidebar-overlay"
+     @click="sidebarOpen = false"></div>
 
-                {{-- Logo + botón móvil --}}
-                <div class="flex items-center">
-                    <button @click="sidebarOpen = !sidebarOpen"
-                            class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            aria-label="Abrir menú">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                    </button>
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 ml-2 md:mr-24">
-                        <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-green-dark">
-                            🐄 GanadoVision
-                        </span>
-                    </a>
-                </div>
-
-                {{-- Usuario --}}
-                <div class="relative" x-data @click.outside="userMenuOpen = false">
-                    <button @click="userMenuOpen = !userMenuOpen"
-                            class="flex items-center text-sm bg-gray-100 rounded-lg p-2 hover:bg-gray-200 transition-colors"
-                            aria-label="Menú de usuario">
-                        <div class="text-right mr-3 hidden md:block">
-                            <div class="text-sm font-medium text-gray-900">{{ auth()->user()->name ?? 'Usuario' }}</div>
-                            <div class="text-xs font-medium text-green-dark">{{ auth()->user()->role ?? 'Administrador' }}</div>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-green-dark text-white flex items-center justify-center font-semibold">
-                            {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
-                        </div>
-                    </button>
-
-                    <div x-show="userMenuOpen" x-cloak
-                         class="absolute right-0 top-12 z-50 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
-                        <div class="px-4 py-3 border-b border-gray-200">
-                            <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name ?? 'Usuario' }}</p>
-                            <p class="text-xs text-green-dark">{{ auth()->user()->role ?? 'Administrador' }}</p>
-                        </div>
-                        <ul class="py-1">
-                            <li>
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Perfil
-                                </a>
-                            </li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="w-full flex items-center text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors">
-                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
-                                        </svg>
-                                        Cerrar sesión
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
+{{-- ══ NAVBAR ══ --}}
+<header class="navbar">
+    <div class="navbar-left">
+        <button class="nav-menu-btn" @click="sidebarOpen = !sidebarOpen" aria-label="Menú">
+            <svg fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+        <a href="{{ route('dashboard') }}" class="nav-brand">
+            <div class="nav-brand-icon">
+                <svg stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
             </div>
-        </div>
-    </nav>
-
-    {{-- OVERLAY MÓVIL --}}
-    <div x-show="sidebarOpen" x-cloak
-         @click="sidebarOpen = false"
-         class="fixed inset-0 z-20 bg-black/50 lg:hidden"
-         aria-hidden="true">
+            <span class="nav-brand-name">GanadoVision</span>
+        </a>
     </div>
 
-    {{-- SIDEBAR --}}
-    <aside :class="{
-                '-translate-x-full': !sidebarOpen,
-                'translate-x-0': sidebarOpen,
-                'w-16': sidebarCollapsed,
-                'w-64': !sidebarCollapsed
-            }"
-           class="fixed top-0 left-0 z-40 h-screen pt-20 bg-white border-r border-gray-200 transition-all duration-300 ease-in-out lg:translate-x-0"
-           aria-label="Sidebar">
-
-        <div class="h-full px-3 pb-4 overflow-y-auto">
-
-            {{-- Botón colapsar (desktop) --}}
-            <button @click="sidebarCollapsed = !sidebarCollapsed"
-                    class="hidden lg:flex items-center justify-center w-full p-2 mb-4 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
-                    :aria-label="sidebarCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'">
-                <svg :class="{ 'rotate-180': sidebarCollapsed }"
-                     class="w-5 h-5 transition-transform duration-300"
-                     fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
+    <div class="navbar-right">
+        <div style="position:relative" x-data @click.outside="userMenuOpen = false">
+            <button class="user-btn" @click="userMenuOpen = !userMenuOpen">
+                <div class="user-info">
+                    <div class="user-name">{{ auth()->user()->name ?? 'Usuario' }}</div>
+                    <div class="user-role">{{ auth()->user()->role ?? 'Administrador' }}</div>
+                </div>
+                <div class="user-avatar">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                </div>
             </button>
 
-            <nav aria-label="Menú principal">
-                <ul class="space-y-2 font-medium">
-                    @php
-                        $menuItems = [
-                            ['name' => 'Dashboard',     'route' => 'dashboard',     'icon' => 'M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z'],
-                            ['name' => 'Animales',      'route' => 'animales.index', 'icon' => 'M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z'],
-                            ['name' => 'Alertas',       'route' => 'alertas.index',  'icon' => 'M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z'],
-                            ['name' => 'Corrales',      'route' => 'corrales.index', 'icon' => 'M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z'],
-                            ['name' => 'Configuración', 'route' => 'configuracion',  'icon' => 'M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z'],
-                        ];
-                    @endphp
-
-                    @foreach($menuItems as $item)
-                        @php $isActive = request()->routeIs($item['route']); @endphp
-                        <li>
-                            <a href="{{ route($item['route']) }}"
-                               class="flex items-center p-2 rounded-lg transition-colors {{ $isActive ? 'bg-green-dark text-white' : 'text-gray-900 hover:bg-gray-100' }}"
-                               :class="{ 'justify-center': sidebarCollapsed }"
-                               aria-current="{{ $isActive ? 'page' : 'false' }}">
-                                <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="{{ $item['icon'] }}"/>
-                                </svg>
-                                <span x-show="!sidebarCollapsed" class="ml-3">{{ $item['name'] }}</span>
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </nav>
-        </div>
-    </aside>
-
-    {{-- CONTENIDO PRINCIPAL --}}
-    <main :class="{ 'lg:pl-16': sidebarCollapsed, 'lg:pl-64': !sidebarCollapsed }"
-          class="pt-20 transition-all duration-300">
-        <div class="p-4 lg:p-6">
-            @if(session('success'))
-                <div class="mb-4 p-4 bg-green-100 text-green-dark rounded-lg border border-green-200">
-                    {{ session('success') }}
+            <div class="user-dropdown" x-show="userMenuOpen" x-cloak>
+                <div class="dropdown-header">
+                    <div class="dn">{{ auth()->user()->name ?? 'Usuario' }}</div>
+                    <div class="dr">{{ auth()->user()->role ?? 'Administrador' }}</div>
                 </div>
-            @endif
-            @if(session('error'))
-                <div class="mb-4 p-4 bg-red-100 text-primary rounded-lg border border-red-200">
-                    {{ session('error') }}
-                </div>
-            @endif
-            {{ $slot }}
+                <a href="#" class="dropdown-item">
+                    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Mi perfil
+                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item danger">
+                        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
         </div>
-    </main>
+    </div>
+</header>
+
+{{-- ══ SIDEBAR ══ --}}
+<aside class="sidebar"
+       :class="{
+           'open': sidebarOpen,
+           'collapsed': sidebarCollapsed
+       }">
+
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Principal</div>
+
+        @php
+        $menu = [
+            ['label' => 'Dashboard',     'route' => 'dashboard',     'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
+            ['label' => 'Animales',      'route' => 'animales.index', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
+            ['label' => 'Corrales',      'route' => 'corrales.index', 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
+            ['label' => 'Alertas',       'route' => 'alertas.index',  'icon' => 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'],
+            ['label' => 'Configuración', 'route' => 'configuracion',  'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z'],
+        ];
+        @endphp
+
+        @foreach($menu as $item)
+            @php $active = request()->routeIs($item['route']); @endphp
+            <a href="{{ route($item['route']) }}"
+               class="nav-item {{ $active ? 'active' : '' }}"
+               title="{{ $item['label'] }}">
+                <svg viewBox="0 0 24 24" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $item['icon'] }}"/>
+                </svg>
+                <span>{{ $item['label'] }}</span>
+            </a>
+        @endforeach
+    </nav>
+
+    <button class="sidebar-collapse-btn"
+            @click="sidebarCollapsed = !sidebarCollapsed"
+            title="Colapsar menú">
+        <svg viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+        </svg>
+        <span>Colapsar</span>
+    </button>
+</aside>
+
+{{-- ══ CONTENIDO ══ --}}
+<main class="main-content" :class="{ 'collapsed': sidebarCollapsed }">
+
+    @if(session('success'))
+    <div class="flash-success">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="flash-error">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {{ session('error') }}
+    </div>
+    @endif
+
+    @yield('content')
+</main>
 
 </body>
 </html>
