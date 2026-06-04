@@ -1,0 +1,6 @@
+
+MQTT_BROKER="localhost"
+MQTT_PORT=1883
+MQTT_TOPIC="rfid/+/events"
+RABBITMQ_HOST="localhost"
+TCP_PORT=5000
