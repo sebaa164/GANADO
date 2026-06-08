@@ -9,7 +9,14 @@ class CorralController extends Controller
 {
     public function index()
     {
-        $corrales = Corral::withCount('animales')->where('activo', true)->get();
+        $corrales = Corral::withCount([
+                        'animales as animales_count'          => fn($q) => $q->where('activo', true),
+                        'alertas as alertas_pendientes_count' => fn($q) => $q->where('estado', 'pendiente'),
+                    ])
+                    ->where('activo', true)
+                    ->orderBy('descripcion')
+                    ->get();
+
         return view('corrales.index', compact('corrales'));
     }
 

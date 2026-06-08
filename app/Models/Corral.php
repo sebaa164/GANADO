@@ -13,6 +13,8 @@ class Corral extends Model
     protected $table = 'corrales';
 
     protected $fillable = [
+        'nombre',
+        'codigo',
         'capacidad_maxima',
         'descripcion',
         'activo',

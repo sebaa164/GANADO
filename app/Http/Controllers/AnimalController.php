@@ -7,10 +7,55 @@ use Illuminate\Http\Request;
 
 class AnimalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $animales = Animal::with('corral')->where('activo', true)->paginate(20);
-        return view('animales.index', compact('animales'));
+        $busqueda = $request->input('busqueda');
+        $corralId = $request->input('corral');
+        $raza     = $request->input('raza');
+        $estado   = $request->input('estado', 'activos'); // default: solo activos
+
+        $query = Animal::with('corral');
+
+        // Filtro de estado
+        if ($estado === 'activos') {
+            $query->where('activo', true);
+        } elseif ($estado === 'inactivos') {
+            $query->where('activo', false);
+        }
+        // 'todos' no aplica filtro
+
+        if ($busqueda) {
+            $query->where(function ($q) use ($busqueda) {
+                $q->where('codigo_caravana', 'ilike', '%'.$busqueda.'%')
+                  ->orWhere('raza', 'ilike', '%'.$busqueda.'%');
+            });
+        }
+
+        if ($corralId) {
+            $query->where('corral_id', $corralId);
+        }
+
+        if ($raza) {
+            $query->where('raza', $raza);
+        }
+
+        $animales = $query->orderBy('fecha_ingreso', 'desc')->paginate(20)->withQueryString();
+
+        // Datos para los selects de filtro
+        $corralesDisponibles = \App\Models\Corral::where('activo', true)
+                                ->orderBy('descripcion')
+                                ->get(['id', 'descripcion']);
+
+        $razasDisponibles = Animal::select('raza')
+                                ->whereNotNull('raza')
+                                ->distinct()
+                                ->orderBy('raza')
+                                ->pluck('raza');
+
+        return view('animales.index', compact(
+            'animales', 'corralesDisponibles', 'razasDisponibles',
+            'busqueda', 'corralId', 'raza', 'estado'
+        ));
     }
 
     public function show(Animal $animal)
@@ -21,14 +66,17 @@ class AnimalController extends Controller
 
     public function create()
     {
-        return view('animales.create');
+        $corrales = \App\Models\Corral::where('activo', true)
+                                      ->orderBy('nombre')
+                                      ->get();
+        return view('animales.create', compact('corrales'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'corral_id'        => 'required|exists:corrales,id',
-            'codigo_caravana'  => 'required|string|max:50|unique:animals',
+            'codigo_caravana'  => 'required|string|max:50|unique:animales,codigo_caravana',
             'raza'             => 'nullable|string|max:100',
             'sexo'             => 'required|in:macho,hembra',
             'fecha_nacimiento' => 'nullable|date',

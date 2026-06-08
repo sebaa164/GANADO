@@ -194,6 +194,29 @@
         .sidebar.collapsed .nav-item span { display: none; }
         .sidebar.collapsed .nav-item { justify-content: center; padding: 10px; }
 
+        /* Badge de alertas en el sidebar */
+        .nav-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 18px; height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #C94A3F;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .sidebar.collapsed .nav-badge {
+            position: absolute;
+            top: 6px; right: 6px;
+            min-width: 14px; height: 14px;
+            font-size: 9px;
+            padding: 0 3px;
+        }
+        .nav-item { position: relative; }
+
         /* Botón colapsar */
         .sidebar-collapse-btn {
             margin: 8px 10px 16px;
@@ -356,6 +379,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="{{ $item['icon'] }}"/>
                 </svg>
                 <span>{{ $item['label'] }}</span>
+                @if($item['route'] === 'alertas.index' && ($alertasBadge ?? 0) > 0)
+                    <span class="nav-badge">{{ $alertasBadge > 99 ? '99+' : $alertasBadge }}</span>
+                @endif
             </a>
         @endforeach
     </nav>

@@ -7,13 +7,37 @@ use Illuminate\Http\Request;
 
 class AlertaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $alertas = Alerta::with(['animal', 'corral'])
-                        ->orderByRaw("CASE prioridad WHEN 'alta' THEN 1 WHEN 'media' THEN 2 ELSE 3 END")
-                        ->latest('generada_en')
-                        ->paginate(20);
-        return view('alertas.index', compact('alertas'));
+        $severidad = $request->input('severidad');
+        $estado    = $request->input('estado', 'pendiente'); // por defecto solo pendientes
+        $tipo      = $request->input('tipo');
+
+        $query = Alerta::with(['animal', 'corral'])
+                    ->orderByRaw("CASE prioridad WHEN 'alta' THEN 1 WHEN 'media' THEN 2 ELSE 3 END")
+                    ->latest('generada_en');
+
+        if ($severidad) {
+            $query->where('prioridad', $severidad);
+        }
+
+        if ($estado && $estado !== 'todas') {
+            $query->where('estado', $estado);
+        }
+
+        if ($tipo) {
+            $query->where('tipo_anomalia', 'like', '%'.$tipo.'%');
+        }
+
+        // Tipos únicos para el select de filtro
+        $tiposDisponibles = Alerta::select('tipo_anomalia')
+                                ->distinct()
+                                ->orderBy('tipo_anomalia')
+                                ->pluck('tipo_anomalia');
+
+        $alertas = $query->paginate(20)->withQueryString();
+
+        return view('alertas.index', compact('alertas', 'tiposDisponibles', 'severidad', 'estado', 'tipo'));
     }
 
     public function show(Alerta $alerta)
