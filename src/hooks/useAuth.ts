@@ -23,6 +23,28 @@ export function useAuth() {
   const { user, isAuthenticated, accessToken, login, logout: storeLogout } = useAuthStore()
 
   const loginFn = async (credentials: LoginCredentials) => {
+    // ── MOCK temporal (quitar cuando el backend esté listo) ──────────────
+    const MOCK_USERS: Record<string, LoginResponse> = {
+      'admin@ganadovision.com': {
+        user: { id: '1', name: 'Admin GanadoVision', email: 'admin@ganadovision.com', role: 'admin' },
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
+      },
+      'operador@ganadovision.com': {
+        user: { id: '2', name: 'Juan Pérez', email: 'operador@ganadovision.com', role: 'operador' },
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
+      },
+    }
+
+    const mockUser = MOCK_USERS[credentials.email]
+    if (mockUser && credentials.password === 'Admin123!') {
+      login(mockUser.user, mockUser.accessToken, mockUser.refreshToken)
+      router.push('/dashboard')
+      return mockUser
+    }
+    // ── FIN MOCK ─────────────────────────────────────────────────────────
+
     const { data } = await api.post<LoginResponse>('/auth/login', credentials)
     login(data.user, data.accessToken, data.refreshToken)
     router.push('/dashboard')
