@@ -62,53 +62,22 @@ export default function LoginPage() {
 
         {/* Logo y texto izquierda */}
         <div className="hidden lg:flex flex-col gap-5 flex-1">
-          {/* Logo circular */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
+            {/* Logo circular con imagen SVG */}
             <div
-              className="w-20 h-20 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '2px solid #2D6A2D' }}
+              className="w-28 h-28 rounded-full flex items-center justify-center shrink-0"
+              style={{ backgroundColor: 'rgba(255,255,255,0.88)', border: '3px solid #2D6A2D' }}
             >
-              {/* Ícono vaca con señal */}
-              <svg viewBox="0 0 80 80" className="w-14 h-14" fill="none">
-                {/* Señal wifi arriba */}
-                <path d="M32 14 Q40 8 48 14" stroke="#2D6A2D" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-                <path d="M28 18 Q40 10 52 18" stroke="#2D6A2D" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                {/* Cabeza vaca */}
-                <ellipse cx="40" cy="38" rx="14" ry="12" fill="#2D6A2D"/>
-                {/* Orejas */}
-                <ellipse cx="26" cy="36" rx="5" ry="4" fill="#2D6A2D"/>
-                <ellipse cx="54" cy="36" rx="5" ry="4" fill="#2D6A2D"/>
-                {/* Cara */}
-                <ellipse cx="40" cy="42" rx="9" ry="7" fill="#fff"/>
-                {/* Ojos */}
-                <circle cx="36" cy="37" r="2" fill="#2D6A2D"/>
-                <circle cx="44" cy="37" r="2" fill="#2D6A2D"/>
-                {/* Nariz */}
-                <ellipse cx="38" cy="43" rx="2" ry="1.5" fill="#2D6A2D"/>
-                <ellipse cx="43" cy="43" rx="2" ry="1.5" fill="#2D6A2D"/>
-                {/* Hoja izquierda */}
-                <path d="M20 52 Q15 44 22 42 Q20 50 28 50 Q22 54 20 52Z" fill="#4caf50"/>
-                {/* Hoja derecha */}
-                <path d="M60 52 Q65 44 58 42 Q60 50 52 50 Q58 54 60 52Z" fill="#4caf50"/>
-              </svg>
+              <img src="/ganado-logo.svg" alt="Logo GanadoVision" className="w-24 h-24" />
             </div>
             <div>
-              <h1
-                className="text-4xl font-bold leading-tight"
-                style={{ color: '#1a3d1a', textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}
-              >
+              <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#1a3d1a', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
                 Monitoreo
               </h1>
-              <h1
-                className="text-4xl font-bold leading-tight"
-                style={{ color: '#1a3d1a', textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}
-              >
+              <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#1a3d1a', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
                 bovino
               </h1>
-              <h1
-                className="text-4xl font-bold leading-tight"
-                style={{ color: '#2D6A2D', textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}
-              >
+              <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#2D6A2D', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
                 inteligente
               </h1>
             </div>
@@ -128,23 +97,10 @@ export default function LoginPage() {
           {/* Ícono vaca centrado en la card */}
           <div className="flex justify-center mb-4">
             <div
-              className="w-20 h-20 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: '#f0f7f0', border: '1px solid #c8e6c0' }}
+              className="w-24 h-24 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: '#f0f7f0' }}
             >
-              <svg viewBox="0 0 80 80" className="w-14 h-14" fill="none">
-                <path d="M32 14 Q40 8 48 14" stroke="#2D6A2D" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-                <path d="M28 18 Q40 10 52 18" stroke="#2D6A2D" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                <ellipse cx="40" cy="38" rx="14" ry="12" fill="#2D6A2D"/>
-                <ellipse cx="26" cy="36" rx="5" ry="4" fill="#2D6A2D"/>
-                <ellipse cx="54" cy="36" rx="5" ry="4" fill="#2D6A2D"/>
-                <ellipse cx="40" cy="42" rx="9" ry="7" fill="#fff"/>
-                <circle cx="36" cy="37" r="2" fill="#2D6A2D"/>
-                <circle cx="44" cy="37" r="2" fill="#2D6A2D"/>
-                <ellipse cx="38" cy="43" rx="2" ry="1.5" fill="#2D6A2D"/>
-                <ellipse cx="43" cy="43" rx="2" ry="1.5" fill="#2D6A2D"/>
-                <path d="M20 52 Q15 44 22 42 Q20 50 28 50 Q22 54 20 52Z" fill="#4caf50"/>
-                <path d="M60 52 Q65 44 58 42 Q60 50 52 50 Q58 54 60 52Z" fill="#4caf50"/>
-              </svg>
+              <img src="/ganado-logo.svg" alt="Logo GanadoVision" className="w-20 h-20" />
             </div>
           </div>
 
