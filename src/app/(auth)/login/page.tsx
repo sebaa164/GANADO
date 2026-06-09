@@ -63,12 +63,12 @@ export default function LoginPage() {
         {/* Logo y texto izquierda */}
         <div className="hidden lg:flex flex-col gap-5 flex-1">
           <div className="flex items-center gap-5">
-            {/* Logo circular con imagen SVG */}
+            {/* Logo circular con imagen */}
             <div
-              className="w-28 h-28 rounded-full flex items-center justify-center shrink-0"
+              className="w-36 h-36 rounded-full flex items-center justify-center shrink-0 overflow-hidden"
               style={{ backgroundColor: 'rgba(255,255,255,0.88)', border: '3px solid #2D6A2D' }}
             >
-              <img src="/logo-ganado.png" alt="Logo GanadoVision" className="w-24 h-24" />
+              <img src="/logo-ganado.png" alt="Logo GanadoVision" className="w-full h-full object-cover rounded-full" />
             </div>
             <div>
               <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#1a3d1a', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
@@ -97,10 +97,10 @@ export default function LoginPage() {
           {/* Ícono vaca centrado en la card */}
           <div className="flex justify-center mb-4">
             <div
-              className="w-24 h-24 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: '#f0f7f0' }}
+              className="w-28 h-28 rounded-full overflow-hidden flex items-center justify-center"
+              style={{ backgroundColor: '#f0f7f0', border: '2px solid #c8e6c0' }}
             >
-              <img src="/logo-ganado.png" alt="Logo GanadoVision" className="w-20 h-20" />
+              <img src="/logo-ganado.png" alt="Logo GanadoVision" className="w-full h-full object-cover rounded-full" />
             </div>
           </div>
 
