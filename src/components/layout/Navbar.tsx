@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useAuthStore } from '@/stores/authStore'
 
 interface NavbarProps {
   onMenuClick: () => void
@@ -33,9 +34,16 @@ export function Navbar({ onMenuClick, user }: NavbarProps) {
     }
   }, [showUserMenu])
 
-  const handleLogout = () => {
-    // TODO: Implementar lógica de logout con zustand authStore
-    console.log('Cerrando sesión...')
+  const handleLogout = async () => {
+    try {
+      const api = (await import('@/lib/axios')).default
+      await api.post('/auth/logout')
+    } catch {
+      // Si falla el endpoint, igual limpiamos sesión local
+    } finally {
+      useAuthStore.getState().logout()
+      window.location.href = '/login'
+    }
   }
 
   return (
