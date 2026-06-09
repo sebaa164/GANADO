@@ -68,7 +68,7 @@ export default function LoginPage() {
               className="w-28 h-28 rounded-full flex items-center justify-center shrink-0"
               style={{ backgroundColor: 'rgba(255,255,255,0.88)', border: '3px solid #2D6A2D' }}
             >
-              <img src="/ganado-logo.svg" alt="Logo GanadoVision" className="w-24 h-24" />
+              <img src="/logo-ganado.png" alt="Logo GanadoVision" className="w-24 h-24" />
             </div>
             <div>
               <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#1a3d1a', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
@@ -100,7 +100,7 @@ export default function LoginPage() {
               className="w-24 h-24 rounded-full flex items-center justify-center"
               style={{ backgroundColor: '#f0f7f0' }}
             >
-              <img src="/ganado-logo.svg" alt="Logo GanadoVision" className="w-20 h-20" />
+              <img src="/logo-ganado.png" alt="Logo GanadoVision" className="w-20 h-20" />
             </div>
           </div>
 
