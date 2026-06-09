@@ -7,6 +7,7 @@ from structlog.contextvars import bind_contextvars, clear_contextvars
 from core.config import settings
 from core.logging import configure_logging
 from api_gateway.routes.health import router as health_router
+from domains.sanitario.router import router as sanitario_router
 
 configure_logging(settings.log_level)
 logger = structlog.get_logger()
@@ -34,3 +35,4 @@ async def correlation_id_middleware(request: Request, call_next):
 
 
 app.include_router(health_router)
+app.include_router(sanitario_router)
