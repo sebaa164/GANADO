@@ -70,14 +70,17 @@ export default function LoginPage() {
             >
               <img src="/logo-ganado.png" alt="Logo GanadoVision" className="w-full h-full object-cover rounded-full" />
             </div>
-            <div>
-              <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#1a3d1a', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
+            <div
+              className="px-5 py-4 rounded-2xl"
+              style={{ backgroundColor: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+            >
+              <h1 className="text-5xl font-bold leading-tight" style={{ color: '#1a3d1a' }}>
                 Monitoreo
               </h1>
-              <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#1a3d1a', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
+              <h1 className="text-5xl font-bold leading-tight" style={{ color: '#1a3d1a' }}>
                 bovino
               </h1>
-              <h1 className="text-4xl font-bold leading-tight drop-shadow-sm" style={{ color: '#2D6A2D', textShadow: '0 1px 4px rgba(255,255,255,0.6)' }}>
+              <h1 className="text-5xl font-bold leading-tight" style={{ color: '#2D6A2D' }}>
                 inteligente
               </h1>
             </div>
