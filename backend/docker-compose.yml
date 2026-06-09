@@ -1,0 +1,54 @@
+services:
+  api:
+    build: .
+    container_name: ganado_api_fastapi
+    restart: unless-stopped
+    env_file:
+      - .env.example
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - .:/app
+
+  postgres:
+    image: postgres:16
+    container_name: ganado_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ganado_db
+      POSTGRES_USER: ganado_user
+      POSTGRES_PASSWORD: ganado_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ganado_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ganado_user -d ganado_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: ganado_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  tf-serving:
+    image: tensorflow/serving:latest
+    profiles: ["ml"]
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./models/weight:/models/weight
+    environment:
+      MODEL_NAME: weight
+
+volumes:
+  ganado_postgres_data:
