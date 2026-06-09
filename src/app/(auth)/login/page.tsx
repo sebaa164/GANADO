@@ -40,45 +40,22 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
-      {/* ── Fondo: foto de campo con ganado ── */}
-      {/* Usamos un gradiente que simula el campo verde hasta tener la imagen real */}
+      {/* ── Fondo: foto real de campo con ganado ── */}
       <div
         className="absolute inset-0 z-0"
         style={{
-          background: 'linear-gradient(135deg, #c8e6c0 0%, #a5d6a7 20%, #81c784 40%, #66bb6a 60%, #d4edda 100%)',
+          backgroundImage: 'url(/campo-ganado.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       />
 
-      {/* Círculos decorativos que simulan el desenfoque del fondo */}
-      <div className="absolute inset-0 z-0">
-        {/* Sol / cielo arriba izquierda */}
-        <div
-          className="absolute rounded-full blur-3xl opacity-60"
-          style={{ width: '400px', height: '400px', top: '-80px', left: '-80px',
-            background: 'radial-gradient(circle, #fff9c4 0%, #fffde7 50%, transparent 80%)' }}
-        />
-        {/* Campo verde centro */}
-        <div
-          className="absolute rounded-full blur-2xl opacity-50"
-          style={{ width: '700px', height: '500px', bottom: '-100px', left: '0',
-            background: 'radial-gradient(ellipse, #2d6a2d 0%, #388e3c 40%, transparent 80%)' }}
-        />
-        {/* Verde claro derecha */}
-        <div
-          className="absolute rounded-full blur-3xl opacity-40"
-          style={{ width: '500px', height: '600px', top: '0', right: '300px',
-            background: 'radial-gradient(ellipse, #a5d6a7 0%, #81c784 50%, transparent 80%)' }}
-        />
-        {/* Fondo profundidad */}
-        <div
-          className="absolute rounded-full blur-3xl opacity-30"
-          style={{ width: '400px', height: '300px', top: '60px', left: '10%',
-            background: 'radial-gradient(ellipse, #b0bec5 0%, #cfd8dc 60%, transparent 80%)' }}
-        />
-      </div>
-
-      {/* Overlay sutil para suavizar */}
-      <div className="absolute inset-0 z-0 bg-white/10" />
+      {/* Overlay para mejorar legibilidad */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{ background: 'rgba(0,0,0,0.15)' }}
+      />
 
       {/* ── Contenido ── */}
       <div className="relative z-10 w-full max-w-5xl mx-6 flex items-center justify-between gap-8">
