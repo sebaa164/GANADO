@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Rutas que NO requieren autenticación
-const PUBLIC_ROUTES = ['/login', '/recuperar-password', '/reset-password']
+const PUBLIC_ROUTES = ['/login', '/recuperar-password', '/reset-password', '/monitoreo-visual', '/mapa-interactivo']
 
 // Rutas que deben redirigir al dashboard si ya estás autenticado
 const AUTH_ROUTES = ['/login', '/recuperar-password', '/reset-password']
