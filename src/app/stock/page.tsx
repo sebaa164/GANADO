@@ -1,12 +1,12 @@
 import { MainLayout } from '@/components/layout'
 import { AuthGuard } from '@/components/auth/AuthGuard'
-import { DashboardContent } from '@/components/dashboard/DashboardContent'
+import { StockView } from '@/components/stock'
 
-export default function DashboardPage() {
+export default function StockPage() {
   return (
     <AuthGuard>
       <MainLayout>
-        <DashboardContent />
+        <StockView />
       </MainLayout>
     </AuthGuard>
   )
