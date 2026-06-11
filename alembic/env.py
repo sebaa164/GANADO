@@ -9,7 +9,7 @@ from domains.auth.models import Usuario, Rol, Permiso
 from domains.estructura.models import Empresa, Establecimiento, Corral, Lote
 from domains.ganado.models import Animal, Pesaje, Alerta
 from domains.auditoria.models import AuditoriaLog
-from domains.alimentacion.models import DeteccionIaAlimentacion, EventoAlimentacion, EventoRfid
+from domains.sanitario.models import EventoSanitario
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)

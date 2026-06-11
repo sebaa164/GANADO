@@ -1,4 +1,3 @@
-from domains.stock.scheduler import start_scheduler
 from uuid import uuid4
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,8 +7,7 @@ from structlog.contextvars import bind_contextvars, clear_contextvars
 from core.config import settings
 from core.logging import configure_logging
 from api_gateway.routes.health import router as health_router
-from domains.alimentacion.router import router as alimentacion_router
-from domains.stock.router import router as stock_router
+from domains.sanitario.router import router as sanitario_router
 
 configure_logging(settings.log_level)
 logger = structlog.get_logger()
@@ -37,11 +35,4 @@ async def correlation_id_middleware(request: Request, call_next):
 
 
 app.include_router(health_router)
-app.include_router(alimentacion_router)
-
-app.include_router(stock_router)
-
-
-@app.on_event("startup")
-async def startup_stock_scheduler():
-    start_scheduler()
+app.include_router(sanitario_router)

@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text, Foreign
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
-from core.db import Base
+from core.database import Base
 
 
 class Camara(Base):
