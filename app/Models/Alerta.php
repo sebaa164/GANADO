@@ -13,6 +13,9 @@ class Alerta extends Model
     protected $table = 'alertas';
 
     protected $fillable = [
+        'corral_id',
+        'animal_id',
+        'evento_id',
         'resuelta_por',
         'tipo_anomalia',
         'prioridad',

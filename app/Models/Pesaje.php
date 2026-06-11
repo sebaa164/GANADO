@@ -13,6 +13,7 @@ class Pesaje extends Model
     protected $table = 'pesajes';
 
     protected $fillable = [
+        'animal_id',
         'peso_kg',
         'tipo',
         'pesado_en',

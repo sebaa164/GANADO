@@ -25,7 +25,10 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Models\Pesaje::observe(\App\Observers\PesajeObserver::class);
+        \App\Models\DatoClimatico::observe(\App\Observers\DatoClimaticoObserver::class);
+        \App\Models\Animal::observe(\App\Observers\AnimalObserver::class);
+        \App\Models\EventoComportamiento::observe(\App\Observers\EventoComportamientoObserver::class);
     }
 
     /**

@@ -25,7 +25,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('corrales', \App\Http\Controllers\CorralController::class);
 
     // Configuración
-    Route::get('/configuracion', fn() => view('configuracion.index'))->name('configuracion');
+    Route::get('/configuracion', [\App\Http\Controllers\ConfiguracionController::class, 'index'])->name('configuracion');
+    Route::post('/configuracion', [\App\Http\Controllers\ConfiguracionController::class, 'update'])->name('configuracion.update');
+    Route::post('/configuracion/ejecutar-reglas', [\App\Http\Controllers\ConfiguracionController::class, 'runRules'])->name('configuracion.run-rules');
 
 });
 
